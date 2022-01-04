@@ -1,0 +1,96 @@
+data unknown (keep=radians radius);
+_start=0;
+_finish=1;
+_length=10;
+_circle=2 * constant('PI');
+
+do radians=_start to (_finish * _circle) by (_circle / 200);
+radius=_length * (3 - 2 * sin(radians) + cos(2 * radians) - 2 *
+abs(cos(radians)));
+
+if radius ge 0 then
+output;
+end;
+
+run;
+
+data transform;
+set unknown;
+x=radius*cos(radians);
+y=radius*sin(radians);
+if radius le 0 then group=1;
+if radious ge 0 then group=2;
+run;
+
+
+data unknown2 (keep=radians radius);
+_start=0;
+_finish=1;
+_length=10;
+_circle=2 * constant('PI');
+
+do radians=_start to (_finish * _circle) by (_circle / 200);
+radius=_length * (2 - 2 * sin(radians) + cos(2 * radians) - 2 *
+abs(cos(radians)));
+output;
+end;
+run;
+
+data transform2;
+set unknown2;
+x=radius*cos(radians);
+y=radius*sin(radians);
+if radius le 0 then group=1;
+if radious ge 0 then group=2;
+run;
+
+
+data unknown3 (keep=radians radius);
+_start=0;
+_finish=1;
+_length=10;
+_circle=2 * constant('PI');
+
+do radians=_start to (_finish * _circle) by (_circle / 200);
+radius=_length * (3 - 2 * sin(radians) + cos(2 * radians) - 2 *
+abs(cos(radians)));
+
+if radius le 0 then
+output;
+end;
+run;
+
+
+data transform3;
+set unknown3;
+x=radius*cos(radians);
+y=radius*sin(radians);
+if radius le 0 then group=1;
+if radious ge 0 then group=2;
+run;
+
+title 'output (all records in do loop)';
+title2 'one outer heart shape is apparent along with one inner heart shape that is flipped in the opposite direction';
+footnote 'Explanation: when the radius of a circle is negative, it is plotted on the perfectly opposite side of the original circle.';
+
+proc sgplot data=transform2 aspect=1.0 noborder;
+	scatter x=x y=y / group=group colormodel=(red pink blueviolet indigo) 
+		colorresponse=radius markerattrs=(symbol=heartfilled size=6px color=pink);
+run;
+
+title 'if radius is ge 0 then output';
+title2 'one heart shape is apparent';
+
+proc sgplot data=transform aspect=1.0 noborder;
+	scatter x=x y=y / group=group colormodel=(blueviolet indigo) 
+		colorresponse=radius markerattrs=(symbol=heartfilled size=6px);
+run;
+
+title 'if radius is le 0 then output';
+title2 'the inner (flipped) heart is apparent';
+footnote 'when the radius is negative, it is on the perfectly opposite side of the original circle.';
+
+proc sgplot data=transform3 aspect=1.0 noborder;
+	scatter x=x y=y / group=group colormodel=(red pink) 
+		colorresponse=radius markerattrs=(symbol=heartfilled size=6px color=pink);
+run;
